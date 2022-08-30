@@ -28,9 +28,8 @@
 </template>
 
 <script>
-    console.log(this.$store);
     export default {
-        name: "student-From",
+        name: "student-from",
         props: {
             scope:String
         },
@@ -47,14 +46,14 @@
             }
         },
         methods: {
-            name: 'student-form',
             goBack() {
                 window.location.href = '/student';
             },
             saveForm(item) {
+                console.log(this);
                 this.$refs[item].validate((valid) => {
                     if (valid) {
-                        this.$store.dispatch('saveStudent',this.form);
+                        this.$root.$options.store.dispatch('saveStudent',this.form);
                     }
                 })
             }

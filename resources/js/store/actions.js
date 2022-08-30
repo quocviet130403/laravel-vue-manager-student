@@ -1,3 +1,4 @@
+import axios from 'axios';
 import Vue from 'vue'
 
 let loader = null;
@@ -19,16 +20,27 @@ export const saveStudent = ({commit}, payload) => {
 
     addLoader();
 
-    this.axios.post('/add-student',payload).then(res => {
-        Vue.prototype.$notify({
-            title : 'Add student success',
-            type : 'success'
-        });
-
-        removeLoader();
-
-        setTimeout(() => {
-            window.location.href = '/list-students'
-        },2000)
+    axios.post('/add-student',payload).then(res => {
+        try {
+            if(res.data.errorCode == 200){
+                Vue.prototype.$notify({
+                    title : res.data.msgCode,
+                    type : 'success'
+                });
+        
+                removeLoader();
+        
+                setTimeout(() => {
+                    window.location.href = '/list-students'
+                },2000)
+            }else{
+                Vue.prototype.$notify({
+                    title : res.data.msgCode,
+                    type : 'error'
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        }
     })
 }

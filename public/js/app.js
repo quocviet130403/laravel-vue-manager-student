@@ -7258,9 +7258,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-console.log(undefined.$store);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "student-From",
+  name: "student-from",
   props: {
     scope: String
   },
@@ -7277,16 +7276,16 @@ console.log(undefined.$store);
     };
   },
   methods: {
-    name: 'student-form',
     goBack: function goBack() {
       window.location.href = '/student';
     },
     saveForm: function saveForm(item) {
       var _this = this;
 
+      console.log(this);
       this.$refs[item].validate(function (valid) {
         if (valid) {
-          _this.$store.dispatch('saveStudent', _this.form);
+          _this.$root.$options.store.dispatch('saveStudent', _this.form);
         }
       });
     }
@@ -7472,8 +7471,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var element_ui__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! element-ui */ "./node_modules/element-ui/lib/element-ui.common.js");
 /* harmony import */ var element_ui__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(element_ui__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var element_ui_lib_theme_chalk_index_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! element-ui/lib/theme-chalk/index.css */ "./node_modules/element-ui/lib/theme-chalk/index.css");
-/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./store/index.js */ "./resources/js/store/index.js");
+/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./store/index.js */ "./resources/js/store/index.js");
+/* harmony import */ var element_ui_lib_theme_chalk_index_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! element-ui/lib/theme-chalk/index.css */ "./node_modules/element-ui/lib/theme-chalk/index.css");
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -7506,7 +7505,7 @@ vue__WEBPACK_IMPORTED_MODULE_3__["default"].component('student-form', (__webpack
  */
 
 var app = new vue__WEBPACK_IMPORTED_MODULE_3__["default"]({
-  store: _store_index_js__WEBPACK_IMPORTED_MODULE_2__.store,
+  store: _store_index_js__WEBPACK_IMPORTED_MODULE_1__.store,
   el: '#app'
 });
 
@@ -7559,14 +7558,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "saveStudent": () => (/* binding */ saveStudent)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-var _this = undefined;
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 
 
 var loader = null;
 
 function addLoader() {
-  loader = vue__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.$loading({
+  loader = vue__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.$loading({
     lock: true,
     text: 'Loading',
     spinner: 'el-icon-loading',
@@ -7581,16 +7581,26 @@ function removeLoader() {
 var saveStudent = function saveStudent(_ref, payload) {
   var commit = _ref.commit;
   addLoader();
-
-  _this.axios.post('/add-student', payload).then(function (res) {
-    vue__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.$notify({
-      title: 'Add student success',
-      type: 'success'
-    });
-    removeLoader();
-    setTimeout(function () {
-      window.location.href = '/list-students';
-    }, 2000);
+  axios__WEBPACK_IMPORTED_MODULE_0___default().post('/add-student', payload).then(function (res) {
+    try {
+      if (res.data.errorCode == 200) {
+        vue__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.$notify({
+          title: res.data.msgCode,
+          type: 'success'
+        });
+        removeLoader();
+        setTimeout(function () {
+          window.location.href = '/list-students';
+        }, 2000);
+      } else {
+        vue__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.$notify({
+          title: res.data.msgCode,
+          type: 'error'
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   });
 };
 
