@@ -19,6 +19,7 @@ Route::get('/', function () {
 });
 
 Route::get('/student', [StudentController::class,'create']);
+Route::get('/list-students', [StudentController::class,'index']);
 Route::post('/add-student', [StudentController::class,'store']);
 
 Auth::routes();

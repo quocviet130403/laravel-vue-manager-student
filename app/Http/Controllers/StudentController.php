@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
@@ -13,7 +14,7 @@ class StudentController extends Controller
         $data = ['scope' => 'create'];
         return view('student.create')->with($data);
     }
-
+    
     public function store(Request $request){
         $data = Arr::except($request->all(),'_token');
         $student = Student::create($data);
@@ -27,5 +28,9 @@ class StudentController extends Controller
             'errorCode' => 200,
             'msgCode' => 'Add Success'
         ]);
+    }
+
+    public function index(){
+        return Student::all();
     }
 }
