@@ -31,6 +31,10 @@ class StudentController extends Controller
     }
 
     public function index(){
+        return view('student.index');
+    }
+    
+    public function getData(){
         return Student::all();
     }
 }

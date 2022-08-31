@@ -7,12 +7,12 @@ import * as actions from './actions';
 
 Vue.use(Vuex);
 
-export const store = new Vuex.Store({
+export default new Vuex.Store({
     modules: {
 
     },
     state: {
-
+        tableData: [],
     },
     getters,
     mutations,

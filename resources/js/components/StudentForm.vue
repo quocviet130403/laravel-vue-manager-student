@@ -50,7 +50,6 @@
                 window.location.href = '/student';
             },
             saveForm(item) {
-                console.log(this);
                 this.$refs[item].validate((valid) => {
                     if (valid) {
                         this.$root.$options.store.dispatch('saveStudent',this.form);

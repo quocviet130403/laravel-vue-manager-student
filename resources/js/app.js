@@ -7,7 +7,8 @@
 require('./bootstrap');
 import Vue from 'vue';
 import ElementUI from 'element-ui';
-import { store } from './store/index.js';
+import store from './store/index';
+
 import 'element-ui/lib/theme-chalk/index.css';
 
 import lang from 'element-ui/lib/locale/lang/en'
@@ -29,8 +30,9 @@ window.Vue = require('vue').default;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('student-form', require('./components/StudentForm.vue').default);
+Vue.component('student-list', require('./components/StudentList.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

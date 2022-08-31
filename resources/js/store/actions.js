@@ -20,8 +20,8 @@ export const saveStudent = ({commit}, payload) => {
 
     addLoader();
 
-    axios.post('/add-student',payload).then(res => {
-        try {
+    try {
+        axios.post('/add-student',payload).then(res => {
             if(res.data.errorCode == 200){
                 Vue.prototype.$notify({
                     title : res.data.msgCode,
@@ -39,8 +39,18 @@ export const saveStudent = ({commit}, payload) => {
                     type : 'error'
                 });
             }
-        } catch (error) {
-            console.log(error);
-        }
-    })
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const renderListStudents = ({commit}, payload) => {
+    try {
+        axios.get('/get-list-students',payload).then(res => {
+            return commit('setTableData',res.data);
+        })
+    } catch (error) {
+        console.log(error);
+    }
 }
