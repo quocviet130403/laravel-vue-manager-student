@@ -33,8 +33,7 @@
                 spinner: 'el-icon-loading',
                 background: 'rgba(0, 0, 0, 0.7)'
             })
-
-            this.$root.$options.store.dispatch('renderListStudents');
+            this.$store.dispatch('renderListStudents');
 
             loading.close();
         },
@@ -47,7 +46,7 @@
             return {
                 TablesColumns: [
                     {
-                        prop: "Name",
+                        prop: "name",
                         label: "Name",
                         minWidth: 100,
                         sortable: true,
@@ -56,7 +55,7 @@
                         fixed: true
                     },
                     {
-                        prop: "Grade",
+                        prop: "grade",
                         label: "Grade",
                         minWidth: 100,
                         sortable: false,
@@ -65,7 +64,7 @@
                         fixed: true
                     },
                     {
-                        prop: "Class",
+                        prop: "class",
                         label: "Class",
                         minWidth: 100,
                         sortable: false,
@@ -74,7 +73,7 @@
                         fixed: true
                     },
                     {
-                        prop: "Email",
+                        prop: "email",
                         label: "Email",
                         minWidth: 100,
                         sortable: false,
@@ -83,7 +82,7 @@
                         fixed: true
                     },
                     {
-                        prop: "Phone",
+                        prop: "phone",
                         label: "Phone",
                         minWidth: 100,
                         sortable: false,

@@ -20,8 +20,8 @@ Route::get('/', function () {
 
 Route::get('/student', [StudentController::class,'create']);
 Route::get('/list-students', [StudentController::class,'index']);
+Route::get('/get-list-students', [StudentController::class,'getData']);
 Route::post('/add-student', [StudentController::class,'store']);
-Route::post('/get-list-students', [StudentController::class,'getData']);
 
 Auth::routes();
 

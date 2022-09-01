@@ -52,7 +52,7 @@
             saveForm(item) {
                 this.$refs[item].validate((valid) => {
                     if (valid) {
-                        this.$root.$options.store.dispatch('saveStudent',this.form);
+                        this.$store.dispatch('saveStudent',this.form);
                     }
                 })
             }
