@@ -6985,7 +6985,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "student-from",
   props: {
-    scope: String
+    scope: String,
+    id: Number
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    if (this.scope == 'edit') {
+      var loading = Vue.prototype.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
+      axios.get("/get-student-by-id/".concat(this.id)).then(function (res) {
+        if (res.data.errorCode == 200) {
+          _this.$set(_this, 'form', res.data.data);
+
+          console.log(45);
+        }
+      });
+      loading.close();
+    }
   },
   data: function data() {
     return {
@@ -7001,14 +7022,21 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     goBack: function goBack() {
-      window.location.href = '/student';
+      window.location.href = '/list-students';
     },
     saveForm: function saveForm(item) {
-      var _this = this;
+      var _this2 = this;
 
       this.$refs[item].validate(function (valid) {
         if (valid) {
-          _this.$store.dispatch('saveStudent', _this.form);
+          if (_this2.scope == 'create') {
+            _this2.$store.dispatch('saveStudent', _this2.form);
+          } else {
+            _this2.$store.dispatch('updateStudent', {
+              form: _this2.form,
+              id: _this2.id
+            });
+          }
         }
       });
     }
@@ -7048,18 +7076,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.$store.dispatch('renderListStudents');
     loading.close();
   },
+  watch: {
+    search: function search(keyword) {
+      this.$store.dispatch('renderListStudentsFilter', this.search);
+    }
+  },
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
     tableData: "tableData"
   })),
   data: function data() {
     return {
+      search: null,
       TablesColumns: [{
         prop: "name",
         label: "Name",
         minWidth: 100,
         sortable: true,
         hidden: true,
-        aligh: "center",
         fixed: true
       }, {
         prop: "grade",
@@ -7067,7 +7100,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         minWidth: 100,
         sortable: false,
         hidden: true,
-        aligh: "center",
         fixed: true
       }, {
         prop: "class",
@@ -7075,7 +7107,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         minWidth: 100,
         sortable: false,
         hidden: true,
-        aligh: "center",
         fixed: true
       }, {
         prop: "email",
@@ -7083,7 +7114,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         minWidth: 100,
         sortable: false,
         hidden: true,
-        aligh: "center",
         fixed: true
       }, {
         prop: "phone",
@@ -7091,7 +7121,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         minWidth: 100,
         sortable: false,
         hidden: true,
-        aligh: "center",
         fixed: true
       }]
     };
@@ -7099,6 +7128,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   methods: {
     AddStudent: function AddStudent() {
       window.location.href = '/student';
+    },
+    editItem: function editItem(id) {
+      window.location.href = "/edit-student/".concat(id);
+    },
+    deleteItem: function deleteItem(id) {
+      var _this = this;
+
+      this.$confirm('Delete Item?', 'Warning', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(function () {
+        // axios.delete(`/delete-student/${payload}`).then(res => {
+        // })
+        _this.$store.dispatch('deleteItem', id);
+
+        _this.$store.dispatch('renderListStudents');
+      });
     }
   }
 });
@@ -7248,6 +7295,7 @@ var render = function render() {
   }, [_c("el-card", {
     staticClass: "box-card"
   }, [_c("el-button", {
+    staticClass: "mb-2",
     attrs: {
       type: "primary"
     },
@@ -7256,14 +7304,25 @@ var render = function render() {
         return _vm.AddStudent();
       }
     }
-  }, [_vm._v("Add student")]), _vm._v(" "), _c("br"), _c("br"), _vm._v(" "), _c("el-table", {
+  }, [_vm._v("Add student")]), _vm._v(" "), _c("el-input", {
+    attrs: {
+      placeholder: "Search..."
+    },
+    model: {
+      value: _vm.search,
+      callback: function callback($$v) {
+        _vm.search = $$v;
+      },
+      expression: "search"
+    }
+  }), _vm._v(" "), _c("br"), _c("br"), _vm._v(" "), _c("el-table", {
     staticStyle: {
       width: "100%"
     },
     attrs: {
       data: _vm.tableData
     }
-  }, _vm._l(_vm.TablesColumns, function (column) {
+  }, [_vm._l(_vm.TablesColumns, function (column) {
     return _c("el-table-column", {
       key: column.label,
       attrs: {
@@ -7272,11 +7331,37 @@ var render = function render() {
         "column-key": column.prop,
         "min-width": column.minWidth,
         sortable: column.sortable,
-        aligh: column.aligh,
         "header-aligh": column.header - _vm.aligh
       }
     });
-  }), 1)], 1)], 1);
+  }), _vm._v(" "), _c("el-table-column", {
+    scopedSlots: _vm._u([{
+      key: "default",
+      fn: function fn(scope) {
+        return [_c("el-button", {
+          attrs: {
+            type: "text",
+            size: "small"
+          },
+          on: {
+            click: function click($event) {
+              return _vm.editItem(scope.row.id);
+            }
+          }
+        }, [_vm._v("Edit")]), _vm._v(" "), _c("el-button", {
+          attrs: {
+            type: "text",
+            size: "small"
+          },
+          on: {
+            click: function click($event) {
+              return _vm.deleteItem(scope.row.id);
+            }
+          }
+        }, [_vm._v("Delete")])];
+      }
+    }])
+  })], 2)], 1)], 1);
 };
 
 var staticRenderFns = [];
@@ -7387,8 +7472,11 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "deleteItem": () => (/* binding */ deleteItem),
 /* harmony export */   "renderListStudents": () => (/* binding */ renderListStudents),
-/* harmony export */   "saveStudent": () => (/* binding */ saveStudent)
+/* harmony export */   "renderListStudentsFilter": () => (/* binding */ renderListStudentsFilter),
+/* harmony export */   "saveStudent": () => (/* binding */ saveStudent),
+/* harmony export */   "updateStudent": () => (/* binding */ updateStudent)
 /* harmony export */ });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
@@ -7440,8 +7528,61 @@ var renderListStudents = function renderListStudents(_ref2, payload) {
   var commit = _ref2.commit;
 
   try {
-    axios__WEBPACK_IMPORTED_MODULE_0___default().get('/get-list-students', payload).then(function (res) {
+    axios__WEBPACK_IMPORTED_MODULE_0___default().get("/get-list-students").then(function (res) {
       return commit('setTableData', res.data);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+var renderListStudentsFilter = function renderListStudentsFilter(_ref3, payload) {
+  var commit = _ref3.commit;
+
+  try {
+    axios__WEBPACK_IMPORTED_MODULE_0___default().get("/get-list-students/".concat(payload)).then(function (res) {
+      return commit('setTableData', res.data);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+var updateStudent = function updateStudent(_ref4, payload) {
+  var commit = _ref4.commit;
+  addLoader();
+
+  try {
+    axios__WEBPACK_IMPORTED_MODULE_0___default().put("/update-student/".concat(payload.id), payload.form).then(function (res) {
+      if (res.data.errorCode == 200) {
+        vue__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.$notify({
+          title: res.data.msgCode,
+          type: 'success'
+        });
+        removeLoader();
+      } else {
+        vue__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.$notify({
+          title: res.data.msgCode,
+          type: 'error'
+        });
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+var deleteItem = function deleteItem(_ref5, payload) {
+  var commit = _ref5.commit;
+  addLoader();
+
+  try {
+    axios__WEBPACK_IMPORTED_MODULE_0___default()["delete"]("/delete-student/".concat(payload)).then(function (res) {
+      if (res.data.errorCode == 200) {
+        vue__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.$notify({
+          title: res.data.msgCode,
+          type: 'success'
+        });
+      }
+
+      removeLoader();
     });
   } catch (error) {
     console.log(error);

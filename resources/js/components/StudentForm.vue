@@ -31,7 +31,27 @@
     export default {
         name: "student-from",
         props: {
-            scope:String
+            scope:String,
+            id:Number
+        },
+        mounted(){
+            if(this.scope == 'edit'){
+                let loading = Vue.prototype.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                })
+                
+                axios.get(`/get-student-by-id/${this.id}`).then(res => {
+                    if(res.data.errorCode == 200){
+                        this.$set(this,'form', res.data.data);
+                        console.log(45)
+                    }
+                })
+
+                loading.close();
+            }
         },
         data() {
             return {
@@ -47,12 +67,16 @@
         },
         methods: {
             goBack() {
-                window.location.href = '/student';
+                window.location.href = '/list-students';
             },
             saveForm(item) {
                 this.$refs[item].validate((valid) => {
                     if (valid) {
-                        this.$store.dispatch('saveStudent',this.form);
+                        if(this.scope == 'create'){
+                            this.$store.dispatch('saveStudent',this.form);
+                        }else{
+                            this.$store.dispatch('updateStudent',{form: this.form, id: this.id});
+                        }
                     }
                 })
             }

@@ -34,7 +34,55 @@ class StudentController extends Controller
         return view('student.index');
     }
     
-    public function getData(){
-        return Student::all();
+    public function getData($searchQuery = null){
+        if($searchQuery){
+            return Student::where('name','like','%'.$searchQuery.'%')->get();
+        }else{
+            return Student::all();
+        }
+    }
+
+    public function edit($id){
+        $data = ['scope' => 'edit'];
+        return view('student.create',compact('id'))->with($data);
+    }
+
+    public function getDataById($id){
+        $student = Student::find($id);
+        return response()->json([
+            'errorCode' => 200,
+            'data' => $student
+        ]);
+    }
+
+    public function update(Request $request, $id){
+        $student = Student::find($id);
+        $data = Arr::except($request->all(),['_token','_method']);
+        $checkUpdate = $student->update($data);
+        if(!$checkUpdate){
+            return response()->json([
+                'errorCode' => 500,
+                'msgCode' => 'Update Error'
+            ]);
+        }
+        return response()->json([
+            'errorCode' => 200,
+            'msgCode' => 'Update Success'
+        ]);
+    }
+
+    public function delete($id){
+        $student = Student::find($id);
+        if($student){
+            $student->delete();
+            return response()->json([
+                'errorCode' => 200,
+                'msgCode' => 'Delete Success'
+            ]);
+        }
+        return response()->json([
+            'errorCode' => 500,
+            'msgCode' => 'Delete Error'
+        ]);
     }
 }
